@@ -1,4 +1,4 @@
-# Memoria para título de Ingeniero civil Informático
+# Código de Memoria para título de Ingeniero civil Informático
 Departamento de informática - UTFSM
 Matías Alexander Moreno Pando
 201673508-9
@@ -18,9 +18,10 @@ Se pueden manipular las semillas, las instancias y diferentes parametros para la
 | float **addP** | Probabilidad de seleccionar movimiento Añadir en cada iteración |
 | float **swapP** | Probabilidad de seleccionar movimiento Swap en cada iteración |
 | float **dropP** | Probabilidad de seleccionar movimiento Swap en cada iteración |
+| float **kImprovement** | Fracción de **nIterations** para determinar cambio de fase intensificación/diversificación |
 | string **path** | Ruta del archivo de instancia |
 
 Ejemplo de linea de ejecución:
 ```sh
-$ ./MCPSB_SA 1 10 500000 80 0.99999 0.33 0.33 0.33 MCPSB/Real_Instances/instancia1.mcsb
+$ ./MCPSB_SA 1 10 500000 80 0.99999 0.33 0.33 0.33 0.01 MCPSB/Real_Instances/instancia1.mcsb
 ```
