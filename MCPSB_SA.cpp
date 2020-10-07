@@ -853,7 +853,7 @@ int main(int argc, char** argv)
   std::chrono::duration<double> elapsed = finish - start;
   outFile << "Elapsed time: " << elapsed.count() << " s\n";
   
-  float bestQuality = actualQuality, newQuality;
+  float bestQuality = actualQuality, newQuality, resetBestQuality;
 
   // realPrize
   int bestRealPrize [nQualities];
@@ -885,6 +885,13 @@ int main(int argc, char** argv)
 
 
   // Iterador SA
+
+  auto ini = std::chrono::high_resolution_clock::now();
+  auto fin = std::chrono::high_resolution_clock::now();
+  auto ini2 = std::chrono::high_resolution_clock::now();
+  auto fin2 = std::chrono::high_resolution_clock::now();
+  float window = 1e-03;
+  int nUpdates = 0, acceptedDowngrades = 0;
   
   int itRes, it, r, rFarm, rFarm2, auxFarm, rFarmExternal, rTruck, nAvailableF, availableF[nFarms], minDist, dist, minDistPos;
   int actualImprovement;
@@ -894,19 +901,24 @@ int main(int argc, char** argv)
   vector <float> bestSolutions;
   // Maximun quantity of iterations with no quality improvements
   float MaxImprovements = kImprovement * nIterations;
+  // cout << "MaxImprovements: " << MaxImprovements << endl;
   for (itRes = 0; itRes < nResets; itRes++)
   {
+    // cout << "Reset: " << itRes << ", bestQuality: " << bestQuality << endl;
     Temp = T0;
     actualImprovement = 0;
     diversificacion = true;
+    resetBestQuality = 0;
     for (it = 0; it < nIterations; it++)
     {
       if (actualImprovement >= MaxImprovements)
       {
+        // cout << "Div: " << diversificacion << ", elapsed: " << elapsed.count() << ", nUpdates: "<< nUpdates << ", acceptedDowngrades: "<< acceptedDowngrades << ", ratioDown: "<< float(acceptedDowngrades)/float(nUpdates)*100 << ", Temp:" << Temp << endl;
+        nUpdates = 0;
+        acceptedDowngrades = 0;
         diversificacion = !diversificacion;
         actualImprovement = 0;
       }
-      actualImprovement++;
       updt = false;
       //visualizar calidad de solucion actual
       /*
@@ -921,13 +933,11 @@ int main(int argc, char** argv)
       addPm = addP - (addP * alphaCtrl * capRatio);
       // Operador Add
       if (addPm > operatorP) */
-
-      if (diversificacion) 
+      if (diversificacion)
       {
         if (addP > operatorP)
         {
           // Añadir nodo factible
-          // Generar una lista de granjas factibles para la capacidad de rTruck
           nAvailableF = 0;
           for (i = 1; i < nFarms; i++)
           {
@@ -990,7 +1000,6 @@ int main(int argc, char** argv)
         
         else if ((swapP + addP) > operatorP){
           // Operador Swap
-          // usar funcion, darle rutas, camion y nodo
           // Se puede hacer swap solo si existe un nodo presente
           if (int(actualRoutes[rTruck].size()) > 2)
           {
@@ -1049,11 +1058,10 @@ int main(int argc, char** argv)
         }
       }
       
-      else // Intensificacion
+      if (!diversificacion) // Intensificacion
       {
-        if (0.5 > operatorP)
+        if (0.5 > operatorP) // Operador Swap Externo
         {
-          // Operador Swap Externo
           // Se puede hacer swap solo si existe un nodo presente
           if (int(actualRoutes[rTruck].size()) > 2)
           {
@@ -1083,24 +1091,24 @@ int main(int argc, char** argv)
             }
           }
         }
-         else // Swap Interno
+        else // Swap Interno
         {
-          // Operador Swap Interno
           // Se puede hacer swap solo si existen 4 o mas nodo presente
           if (int(actualRoutes[rTruck].size()) > 3)
           {
             rFarm = int_rand(1, actualRoutes[rTruck].size() - 1);
-
-            selected = false;
-            while (!selected)
+            rFarm2 = int_rand(1, actualRoutes[rTruck].size() - 1);
+            if (rFarm == rFarm2)
             {
-              rFarm2 = int_rand(1, actualRoutes[rTruck].size() - 1);
-              if (rFarm != rFarm2)
+              if (rFarm2 == actualRoutes[rTruck].size() - 2)
               {
-                selected = true;
+                rFarm2--;
+              }
+              else
+              {
+                rFarm2++;
               }
             }
-            
 
             auxFarm = newRoutes[rTruck][rFarm];
             newRoutes[rTruck][rFarm] = newRoutes[rTruck][rFarm2];
@@ -1122,13 +1130,23 @@ int main(int argc, char** argv)
               newRoutes[rTruck] = actualRoutes[rTruck];
             }
           }
-        } 
+        }
       }
+      
       // Factibilidad del cambio
       if (updt)
       {
+        nUpdates++;
         newQuality = eval(newRealPrize, minPrize, profit, cost, nTrucks, newRoutes, newIncome, newCost);
-        p = exp((newQuality - actualQuality)/Temp);
+        if (diversificacion)
+        {
+          p = exp((newQuality - actualQuality)/Temp);
+        }
+        else
+        {
+          p = exp((newQuality - actualQuality)/(Temp*0.1));
+        }
+        
         /*
         if (it % 50 == 0)
         {
@@ -1137,8 +1155,12 @@ int main(int argc, char** argv)
         */
         if (p > float_rand(0,1))
         {
+          if (newQuality < actualQuality)
+          {
+            acceptedDowngrades++;
+          }
+          
           // Actualizar actualQuality, actualRoutes, actualRealPrize
-          actualImprovement = 0;
           actualQuality = newQuality;
 
           for (i = 1; i < nTrucks; i++){
@@ -1153,6 +1175,13 @@ int main(int argc, char** argv)
           // actualizar production, capacity
           getCapacity(capacity, oCap, oProd, actualRoutes, nTrucks);
           getProduction(production, oProd, actualRoutes, nTrucks, nFarms);
+
+          // Guardar bestQualityReset
+
+          if (resetBestQuality < actualQuality)
+          {
+            resetBestQuality = actualQuality;
+          }
 
           // Checkear actualquality con bestQuality
           if (bestQuality < actualQuality)
@@ -1183,14 +1212,14 @@ int main(int argc, char** argv)
           newRoutes[rTruck] = actualRoutes[rTruck];
         } 
       }
+      else
+      {
+        actualImprovement++;
+      }
       Temp *= alpha;
     }
-    // Mejores soluciones cada 100 resets
-    /*if (itRes % w == 0)
-    {
-      bestSolutions.push_back(bestQuality);
-      cout << "Reset: " << itRes << ", bestQuality: " << bestQuality << ", Income: " << bestIncome << ", Cost: " << bestCost <<  endl;
-    }*/
+    // Mejor solución en cada reset
+    bestSolutions.push_back(resetBestQuality);
   }
   
   // Guardar mejor solución  actual en archivo
