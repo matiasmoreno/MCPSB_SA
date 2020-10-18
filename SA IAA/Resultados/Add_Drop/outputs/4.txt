@@ -1,0 +1,111 @@
+Instance 4  nF: 40  nT: 5  Min 1-2-3: 0-0-0
+
+Seed 1
+** GRASP **  Q: 0, Income: 0, Cost: 0  Prize (1-2-3): 0 0 0
+Routes / Distance / Load
+Truck 1 Q1 80-80 0 0
+Truck 2 Q1 80-80 0 0
+Truck 3 Q1 80-80 0 0
+Truck 4 Q1 80-80 0 0
+Truck 5 Q1 80-80 0 0
+Elapsed time: 0.0001812 s
+
+** SA ** nReset: 15  nIt: 16000000
+Quality: 1235.12, Income: 2878.12, Cost: 1643  Prize (1-2-3): 53111 56484 10959
+Routes / Distance / Load
+Truck 1 Q1 80-40-22-25-28-80 637 26351
+Truck 2 Q2 80-26-23-20-17-35-80 317 27665
+Truck 3 Q3 80-27-80 42 10959
+Truck 4 Q1 80-10-4-1-13-16-80 404 26760
+Truck 5 Q2 80-32-11-7-8-5-2-31-29-80 243 28819
+Mejores soluciones cada 1 resets:
+1144.01 - 1196.07 - 1235.12 - 1235.12 - 1235.12 - 1235.12 - 1235.12 - 1235.12 - 1235.12 - 1235.12 - 1235.12 - 1235.12 - 1235.12 - 1235.12 - 1235.12
+Elapsed time: 224.427 s
+
+Seed 2
+** GRASP **  Q: 0, Income: 0, Cost: 0  Prize (1-2-3): 0 0 0
+Routes / Distance / Load
+Truck 1 Q1 80-80 0 0
+Truck 2 Q1 80-80 0 0
+Truck 3 Q1 80-80 0 0
+Truck 4 Q1 80-80 0 0
+Truck 5 Q1 80-80 0 0
+Elapsed time: 0.00011 s
+
+** SA ** nReset: 15  nIt: 16000000
+Quality: 1201.78, Income: 2836.78, Cost: 1635  Prize (1-2-3): 53111 54515 10959
+Routes / Distance / Load
+Truck 1 Q3 80-27-80 42 10959
+Truck 2 Q1 80-10-4-1-13-16-80 404 26760
+Truck 3 Q2 80-29-35-32-20-80 226 25352
+Truck 4 Q1 80-40-22-25-28-80 637 26351
+Truck 5 Q2 80-17-7-11-8-5-2-31-80 326 29163
+Mejores soluciones cada 1 resets:
+1160.53 - 1196.07 - 1196.07 - 1196.07 - 1196.07 - 1196.07 - 1196.07 - 1201.78 - 1201.78 - 1201.78 - 1201.78 - 1201.78 - 1201.78 - 1201.78 - 1201.78
+Elapsed time: 212.148 s
+
+Seed 3
+** GRASP **  Q: 0, Income: 0, Cost: 0  Prize (1-2-3): 0 0 0
+Routes / Distance / Load
+Truck 1 Q1 80-80 0 0
+Truck 2 Q1 80-80 0 0
+Truck 3 Q1 80-80 0 0
+Truck 4 Q1 80-80 0 0
+Truck 5 Q1 80-80 0 0
+Elapsed time: 0.0001591 s
+
+** SA ** nReset: 15  nIt: 16000000
+Quality: 1215.12, Income: 2878.12, Cost: 1663  Prize (1-2-3): 53111 56484 10959
+Routes / Distance / Load
+Truck 1 Q3 80-27-80 42 10959
+Truck 2 Q2 80-11-7-8-5-2-31-35-29-80 273 28761
+Truck 3 Q2 80-32-17-20-23-26-80 293 27723
+Truck 4 Q1 80-40-22-25-28-80 637 26351
+Truck 5 Q1 80-10-1-4-13-16-80 418 26760
+Mejores soluciones cada 1 resets:
+1196.07 - 1208.12 - 1208.12 - 1208.12 - 1208.12 - 1208.12 - 1208.12 - 1214.12 - 1214.12 - 1214.12 - 1214.12 - 1214.12 - 1214.12 - 1215.12 - 1215.12
+Elapsed time: 215.474 s
+
+Seed 4
+** GRASP **  Q: 0, Income: 0, Cost: 0  Prize (1-2-3): 0 0 0
+Routes / Distance / Load
+Truck 1 Q1 80-80 0 0
+Truck 2 Q1 80-80 0 0
+Truck 3 Q1 80-80 0 0
+Truck 4 Q1 80-80 0 0
+Truck 5 Q1 80-80 0 0
+Elapsed time: 0.000187 s
+
+** SA ** nReset: 15  nIt: 16000000
+Quality: 1227.12, Income: 2878.12, Cost: 1651  Prize (1-2-3): 53111 56484 10959
+Routes / Distance / Load
+Truck 1 Q1 80-40-22-25-28-80 637 26351
+Truck 2 Q3 80-27-80 42 10959
+Truck 3 Q2 80-29-32-31-2-7-8-5-11-80 251 28819
+Truck 4 Q1 80-16-13-1-4-10-80 404 26760
+Truck 5 Q2 80-26-23-20-17-35-80 317 27665
+Mejores soluciones cada 1 resets:
+1153.91 - 1173.69 - 1188.79 - 1200.84 - 1200.84 - 1200.84 - 1208.22 - 1208.22 - 1208.22 - 1227.12 - 1227.12 - 1227.12 - 1227.12 - 1227.12 - 1227.12
+Elapsed time: 213.898 s
+
+Seed 5
+** GRASP **  Q: 0, Income: 0, Cost: 0  Prize (1-2-3): 0 0 0
+Routes / Distance / Load
+Truck 1 Q1 80-80 0 0
+Truck 2 Q1 80-80 0 0
+Truck 3 Q1 80-80 0 0
+Truck 4 Q1 80-80 0 0
+Truck 5 Q1 80-80 0 0
+Elapsed time: 0.0002042 s
+
+** SA ** nReset: 15  nIt: 16000000
+Quality: 1208.12, Income: 2878.12, Cost: 1670  Prize (1-2-3): 53111 56484 10959
+Routes / Distance / Load
+Truck 1 Q2 80-11-5-8-7-2-31-32-29-80 251 28819
+Truck 2 Q1 80-4-10-1-13-16-80 423 26760
+Truck 3 Q3 80-27-80 42 10959
+Truck 4 Q1 80-40-22-25-28-80 637 26351
+Truck 5 Q2 80-35-17-20-23-26-80 317 27665
+Mejores soluciones cada 1 resets:
+1181.78 - 1181.78 - 1181.78 - 1181.78 - 1181.78 - 1181.78 - 1196.07 - 1196.07 - 1196.07 - 1205.69 - 1205.69 - 1205.69 - 1205.69 - 1208.12 - 1208.12
+Elapsed time: 221.641 s
