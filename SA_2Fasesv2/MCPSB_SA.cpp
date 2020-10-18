@@ -886,12 +886,16 @@ int main(int argc, char** argv)
 
   // Iterador SA
 
+  ofstream data;
+  data.open("outputs/data.csv");
+  data << "it,temp,actualQ,bestQ,p\n";
+
   auto ini = std::chrono::high_resolution_clock::now();
   auto fin = std::chrono::high_resolution_clock::now();
   auto ini2 = std::chrono::high_resolution_clock::now();
   auto fin2 = std::chrono::high_resolution_clock::now();
   float window = 1e-03;
-  int nUpdates = 0, acceptedDowngrades = 0;
+  int nUpdates = 0, acceptedDowngrades = 0, totalIt = 0;
   
   int itRes, it, r, rFarm, rFarm2, auxFarm, rFarmExternal, rTruck, nAvailableF, availableF[nFarms], minDist, dist, minDistPos;
   int actualImprovement;
@@ -913,9 +917,6 @@ int main(int argc, char** argv)
     {
       if (actualImprovement >= MaxImprovements)
       {
-        // cout << "Div: " << diversificacion << ", elapsed: " << elapsed.count() << ", nUpdates: "<< nUpdates << ", acceptedDowngrades: "<< acceptedDowngrades << ", ratioDown: "<< float(acceptedDowngrades)/float(nUpdates)*100 << ", Temp:" << Temp << endl;
-        nUpdates = 0;
-        acceptedDowngrades = 0;
         diversificacion = !diversificacion;
         actualImprovement = 0;
       }
@@ -1216,6 +1217,14 @@ int main(int argc, char** argv)
       {
         actualImprovement++;
       }
+      totalIt++;
+      if (totalIt % 10000 == 0)
+      {
+        p = std::ceil(p * 100.0) / 100.0;
+        data << totalIt << "," << Temp << "," << actualQuality << "," << bestQuality << "," << float(acceptedDowngrades)/float(nUpdates)*100 << "," << diversificacion << "\n";
+        nUpdates = 0;
+        acceptedDowngrades = 0;
+      }
       Temp *= alpha;
     }
     // Mejor solución en cada reset
@@ -1286,6 +1295,7 @@ int main(int argc, char** argv)
   outFile << "Elapsed time: " << elapsed.count() << " s\n";
 
   outFile.close();
+  data.close();
   cout << bestQuality << endl;
   return 0;
 }
