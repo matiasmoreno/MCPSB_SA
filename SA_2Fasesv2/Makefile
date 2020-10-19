@@ -2,9 +2,9 @@ flags=-Wno-deprecated -g -ggdb
 comp=g++
 prog=MCPSB_SA
 
-#PARAMS = SeednResets nIterations T0 alpha addP swapP path
+#PARAMS = Seed nResets nIterations T0 alpha addP swapP dropP kImprovements path
 #3858 10 10000 226 1.0000 0 0.7100
-PARAMS = 3 5 16000000 80 0.99999975 0.5 0.0 0.5 0.1 MCPSB/Real_Instances/instancia1.mcsb
+PARAMS = 3 1000 500000 30 0.999995 0.5 0.0 0.5 0.08 MCPSB/Real_Instances/instancia1.mcsb
 #PARAMS = 1 10 500000 80 0.99999 0.33 0.33 MCPSB/Real_Instances/instancia1.mcsb
 
 debug=0

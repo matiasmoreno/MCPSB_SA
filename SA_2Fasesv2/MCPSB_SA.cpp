@@ -888,7 +888,7 @@ int main(int argc, char** argv)
 
   ofstream data;
   data.open("outputs/data.csv");
-  data << "it,temp,actualQ,bestQ,p\n";
+  data << "it,temp,actualQ,bestQ,pAvg,diversification\n";
 
   auto ini = std::chrono::high_resolution_clock::now();
   auto fin = std::chrono::high_resolution_clock::now();
@@ -896,6 +896,7 @@ int main(int argc, char** argv)
   auto fin2 = std::chrono::high_resolution_clock::now();
   float window = 1e-03;
   int nUpdates = 0, acceptedDowngrades = 0, totalIt = 0;
+  int maxIntensification = nIterations * 0.03, nIntensification = 0;
   
   int itRes, it, r, rFarm, rFarm2, auxFarm, rFarmExternal, rTruck, nAvailableF, availableF[nFarms], minDist, dist, minDistPos;
   int actualImprovement;
@@ -911,15 +912,30 @@ int main(int argc, char** argv)
     // cout << "Reset: " << itRes << ", bestQuality: " << bestQuality << endl;
     Temp = T0;
     actualImprovement = 0;
+    nIntensification = 0;
     diversificacion = true;
     resetBestQuality = 0;
     for (it = 0; it < nIterations; it++)
     {
-      if (actualImprovement >= MaxImprovements)
+      if (!diversificacion)
       {
-        diversificacion = !diversificacion;
-        actualImprovement = 0;
+        nIntensification++;
+        if (nIntensification >= maxIntensification)
+        {
+          diversificacion = !diversificacion;
+          actualImprovement = 0;
+          nIntensification = 0;
+        }
       }
+      else
+      {
+        if (actualImprovement >= MaxImprovements)
+        {
+          diversificacion = !diversificacion;
+          actualImprovement = 0;
+        }
+      }
+      
       updt = false;
       //visualizar calidad de solucion actual
       /*
@@ -1218,7 +1234,7 @@ int main(int argc, char** argv)
         actualImprovement++;
       }
       totalIt++;
-      if (totalIt % 10000 == 0)
+      if (totalIt % 1000 == 0)
       {
         p = std::ceil(p * 100.0) / 100.0;
         data << totalIt << "," << Temp << "," << actualQuality << "," << bestQuality << "," << float(acceptedDowngrades)/float(nUpdates)*100 << "," << diversificacion << "\n";

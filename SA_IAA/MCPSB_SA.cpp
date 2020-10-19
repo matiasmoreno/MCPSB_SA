@@ -864,8 +864,12 @@ int main(int argc, char** argv)
 
 
       // Iterador SA
+      ofstream data;
+      data.open("outputs/data.csv");
+      data << "it,temp,actualQ,bestQ,pAvg,diversification\n";
       
       int itRes, it, r, rFarm, rFarmExternal, rTruck, nAvailableF, availableF[nFarms], minDist, dist, minDistPos;
+      int totalIt = 0, acceptedDowngrades = 0, nUpdates = 0;
       float p, operatorP;
       float Temp, addPm, capRatio;
       bool updt;
@@ -1022,7 +1026,7 @@ int main(int argc, char** argv)
           // Factibilidad del cambio
           if (updt)
           {
-            //cout << "update\n";
+            nUpdates++;
             newQuality = eval(newRealPrize, minPrize, profit, cost, nTrucks, newRoutes, newIncome, newCost);
             p = exp((newQuality - actualQuality)/Temp);
             /*
@@ -1033,6 +1037,10 @@ int main(int argc, char** argv)
             */
             if (p > float_rand(0,1))
             {
+              if (newQuality < actualQuality)
+              {
+                acceptedDowngrades++;
+              }
               // Actualizar actualQuality, actualRoutes, actualRealPrize
               actualQuality = newQuality;
 
@@ -1082,6 +1090,14 @@ int main(int argc, char** argv)
             } 
             //cout << "despues update\n";
           }
+          totalIt++;
+          if (totalIt % 1000 == 0)
+          {
+            p = std::ceil(p * 100.0) / 100.0;
+            data << totalIt << "," << Temp << "," << actualQuality << "," << bestQuality << "," << float(acceptedDowngrades)/float(nUpdates)*100 << "\n";
+            nUpdates = 0;
+            acceptedDowngrades = 0;
+          }
           Temp *= alpha;
         }
         // Mejores soluciones cada 100 resets
@@ -1091,6 +1107,7 @@ int main(int argc, char** argv)
           cout << "Reset: " << itRes << ", bestQuality: " << bestQuality << ", Income: " << bestIncome << ", Cost: " << bestCost <<  endl;
         }*/
       }
+      data.close();
       
       // Guardar mejor solución  actual en archivo
 
@@ -1155,7 +1172,6 @@ int main(int argc, char** argv)
       elapsed = finish - start;
       outFile << "Elapsed time: " << elapsed.count() << " s\n";
     }
-
     outFile.close();
   }
  return 0;
