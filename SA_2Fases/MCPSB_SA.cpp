@@ -19,19 +19,22 @@ using namespace std;
 int firstSeed = 0, lastSeed = 5;
 int randLength = 5;
 int nResets = 100, nIterations = 10000;
-float T0 = 80;
+float T0 = 35;
 float alpha = 1;
 float addP = 0.33;
 float swapP = 0.33;
 float dropP = 0.33;
+float swapI = 0.5;
 float alphaCtrl = 0;
 float kImprovement = 0.01;
 int Seed;
 int schedule = 0;
+int sineOff = 5;
 string path;
 
 void Capture_Params(int argc, char **argv){
-    Seed = atoi(argv[1]);
+    firstSeed = atoi(argv[1]);
+    // lastSeed = atoi(argv[2]);
     nResets = atoi(argv[2]);
     nIterations = atoi(argv[3]);
     T0 = atof(argv[4]);
@@ -39,9 +42,10 @@ void Capture_Params(int argc, char **argv){
     addP = atof(argv[6]);
     swapP = atof(argv[7]);
     dropP = atof(argv[8]);
-    kImprovement = atof(argv[9]);
-    schedule = atoi(argv[10]);
-    path = argv[11];
+    swapI = atof(argv[9]);
+    kImprovement = atof(argv[10]);
+    schedule = atoi(argv[11]);
+    path = argv[12];
 }
 
 float float_rand(float a, float b) {
@@ -637,11 +641,14 @@ int main(int argc, char** argv)
   
   ofstream data;
   data.open("data/data.csv");
-  data << "it,temp,actualQ,bestQ,pAvg,diversification\n";
+  data << "it,temp,actualQ,bestQ,pAvg,intensification\n";
+  int nUpdates = 0, acceptedDowngrades = 0, totalIt = 0;
 
   // Multiples Seeds
-  /*   for (Seed = firstSeed; Seed < lastSeed; Seed++)
-  { */
+  float topQuality = 0, sumQuality = 0;
+
+  for (Seed = firstSeed; Seed < firstSeed+1; Seed++)
+  {
   start = std::chrono::high_resolution_clock::now();
   outFile << endl << "Seed " << Seed << endl;
   srand48(Seed);
@@ -829,34 +836,25 @@ int main(int argc, char** argv)
 
 
   // Iterador SA
-
-  auto ini = std::chrono::high_resolution_clock::now();
-  auto fin = std::chrono::high_resolution_clock::now();
-  auto ini2 = std::chrono::high_resolution_clock::now();
-  auto fin2 = std::chrono::high_resolution_clock::now();
-  float window = 1e-03;
-  int nUpdates = 0, acceptedDowngrades = 0, totalIt = 0;
-  int maxIntensification = nIterations * 0.03, nIntensification = 0;
   
   int itRes, it, r, rFarm, rFarm2, auxFarm, rFarmExternal, rTruck, nAvailableF, availableF[nFarms], minDist, dist, minDistPos;
   int noImprovement;
   float p, operatorP;
   float Temp, addPm, capRatio;
-  bool feasible, diversificacion, selected;
+  bool feasible, intensification, selected;
   // Maximun quantity of iterations with no quality improvements
   float MaxImprovements = kImprovement * nIterations;
   for (itRes = 0; itRes < nResets; itRes++)
   {
     Temp = T0;
     noImprovement = 0;
-    nIntensification = 0;
-    diversificacion = true;
+    intensification = false;
     resetBestQuality = 0;
     for (it = 0; it < nIterations; it++)
     {
-      if (noImprovement >= MaxImprovements)
+      if (noImprovement >= MaxImprovements && it > (nIterations*0))
       {
-        diversificacion = !diversificacion;
+        intensification = !intensification;
         noImprovement = 0;
       }
       
@@ -865,7 +863,7 @@ int main(int argc, char** argv)
       operatorP = float_rand(0,1);
       rTruck = int_rand(1, nTrucks);
 
-      if (diversificacion)
+      if (!intensification)
       {
         if (addP > operatorP) // Añadir nodo factible
         {
@@ -929,8 +927,8 @@ int main(int argc, char** argv)
           }
         }
         
-        else if ((swapP + addP) > operatorP){ // Swap Externo
-          
+        else if (addP + swapP > operatorP) // Swap Externo
+        {
           // Se puede hacer swap solo si existe un nodo presente
           if (int(actualRoutes[rTruck].size()) > 2)
           {
@@ -960,7 +958,7 @@ int main(int argc, char** argv)
             }
           }
         }
-
+        
         else // Quitar nodo de una ruta
         {
           // La ruta siempre tiene el nodo de origen y destino
@@ -988,43 +986,77 @@ int main(int argc, char** argv)
         }
       }
       
-      if (!diversificacion) // Fase de Intensificacion (Swap Interno)
+      if (intensification) // Fase de Intensificacion
       {
-        // Se puede hacer swap interno solo si existen 4 o mas nodo presente en la ruta
-        if (int(actualRoutes[rTruck].size()) > 3)
-        {
-          rFarm = int_rand(1, actualRoutes[rTruck].size() - 1);
-          rFarm2 = int_rand(1, actualRoutes[rTruck].size() - 1);
-          if (rFarm == rFarm2)
+        if (swapI > operatorP){ // Swap Externo
+          // Se puede hacer swap solo si existe un nodo presente
+          if (int(actualRoutes[rTruck].size()) > 2)
           {
-            if (rFarm2 == actualRoutes[rTruck].size() - 2)
+            rFarm = int_rand(1, actualRoutes[rTruck].size() - 1);
+            rFarmExternal = getTopRandomExternalFarm(actualRoutes, cost, production, oProd, farmQuality, rTruck, rFarm, nTrucks, nFarms, nQualities, randLength, profit, capacity, iQualityFarms, origin);
+
+            if (rFarmExternal != 0)
             {
-              rFarm2--;
+              newRoutes[rTruck][rFarm] = rFarmExternal;
+
+              // Nueva cantidad de recolección por calidad
+              getRealPrize(newRealPrize, newRoutes, nTrucks, nQualities, oProd, farmQuality);
+              if (feasibility(newRealPrize, minPrize, newRoutes))
+              {
+                feasible = true;
+              }
+              else
+              {
+                // Restaurar actualRealPrize
+                for (i = 1; i < nQualities; i++)
+                {
+                  newRealPrize[i] = actualRealPrize[i];
+                }
+                // Restaurar newRoutes
+                newRoutes[rTruck] = actualRoutes[rTruck];
+              }
+            }
+          }
+        }
+        
+        else // Swap Interno
+        {
+          // Se puede hacer swap interno solo si existen 4 o mas nodo presente en la ruta
+          if (int(actualRoutes[rTruck].size()) > 3)
+          {
+            rFarm = int_rand(1, actualRoutes[rTruck].size() - 1);
+            rFarm2 = int_rand(1, actualRoutes[rTruck].size() - 1);
+            if (rFarm == rFarm2)
+            {
+              if (rFarm2 == actualRoutes[rTruck].size() - 2)
+              {
+                rFarm2--;
+              }
+              else
+              {
+                rFarm2++;
+              }
+            }
+
+            auxFarm = newRoutes[rTruck][rFarm];
+            newRoutes[rTruck][rFarm] = newRoutes[rTruck][rFarm2];
+            newRoutes[rTruck][rFarm2] = auxFarm;
+            // Nueva cantidad de recolección por calidad
+            getRealPrize(newRealPrize, newRoutes, nTrucks, nQualities, oProd, farmQuality);
+            if (feasibility(newRealPrize, minPrize, newRoutes))
+            {
+              feasible = true;
             }
             else
             {
-              rFarm2++;
+              // Restaurar actualRealPrize
+              for (i = 1; i < nQualities; i++)
+              {
+                newRealPrize[i] = actualRealPrize[i];
+              }
+              // Restaurar newRoutes
+              newRoutes[rTruck] = actualRoutes[rTruck];
             }
-          }
-
-          auxFarm = newRoutes[rTruck][rFarm];
-          newRoutes[rTruck][rFarm] = newRoutes[rTruck][rFarm2];
-          newRoutes[rTruck][rFarm2] = auxFarm;
-          // Nueva cantidad de recolección por calidad
-          getRealPrize(newRealPrize, newRoutes, nTrucks, nQualities, oProd, farmQuality);
-          if (feasibility(newRealPrize, minPrize, newRoutes))
-          {
-            feasible = true;
-          }
-          else
-          {
-            // Restaurar actualRealPrize
-            for (i = 1; i < nQualities; i++)
-            {
-              newRealPrize[i] = actualRealPrize[i];
-            }
-            // Restaurar newRoutes
-            newRoutes[rTruck] = actualRoutes[rTruck];
           }
         }
       }
@@ -1034,7 +1066,15 @@ int main(int argc, char** argv)
       {
         nUpdates++;
         newQuality = eval(newRealPrize, minPrize, profit, cost, nTrucks, newRoutes, newIncome, newCost);
-        p = exp((newQuality - actualQuality)/Temp);
+        
+        if (intensification)
+        {
+          p = exp((newQuality - actualQuality)/(Temp*0.01));
+        }
+        else
+        {
+          p = exp((newQuality - actualQuality)/Temp);
+        }
         
         if (newQuality < actualQuality) // Si la nueva solución es peor que la anterior sumo al contador
         {
@@ -1108,7 +1148,7 @@ int main(int argc, char** argv)
       if (totalIt % 1000 == 0) // Escribo en el CSV
       {
         p = std::ceil(p * 100.0) / 100.0;
-        data << totalIt << "," << Temp << "," << actualQuality << "," << bestQuality << "," << float(acceptedDowngrades)/float(nUpdates)*100 << "," << diversificacion << "\n";
+        data << totalIt << "," << Temp << "," << actualQuality << "," << topQuality << "," << float(acceptedDowngrades)/float(nUpdates)*100 << "," << intensification << "\n";
         nUpdates = 0;
         acceptedDowngrades = 0;
       }
@@ -1116,12 +1156,40 @@ int main(int argc, char** argv)
         case 0: // Polinomial
             Temp *= alpha;
             break;
-        case 1: // Sinusoidal
-            Temp = T0/2 * cos( it * M_PI/nIterations ) + T0/2 + 5;
+        case 1: // Lineal
+            Temp = T0 - ( T0*it / nIterations );
             break;
-        case 2: // Mixto (Pendiente)
-            Temp = T0/2 * cos( it * M_PI/nIterations ) + T0/2;
+        case 2: // Sinusoidal
+            Temp = T0/2 * cos( it * M_PI/nIterations ) + T0/2 + sineOff;
             break;
+        case 3: // Doble Sinusoidal
+            if (it < nIterations/2)
+            {
+              Temp = T0/2 * cos( it * M_PI/nIterations ) + T0/2 + sineOff;
+            }
+            else
+            {
+              Temp = T0/4 * cos( (it + (nIterations/2)) * (M_PI/(nIterations/2))) + T0/4 + sineOff;
+            }
+            break;
+        case 4: // Triple Sinusoidal
+            if (it < nIterations/2)
+            {
+              Temp = T0/2 * cos( it * M_PI/nIterations ) + T0/2 + sineOff;
+            }
+            else if (it < nIterations*0.75)
+            {
+              Temp = T0/4 * cos( (it + (nIterations/2)) * (M_PI/(nIterations/2))) + T0/4 + sineOff;
+            }
+            else
+            {
+              Temp = T0/8 * cos( (it + (nIterations/4)) * (M_PI/(nIterations/4))) + T0/8 + sineOff;
+            }
+            break;
+      }
+      if (Temp < 0)
+      {
+        Temp = 0;
       }
     }
   }
@@ -1172,8 +1240,16 @@ int main(int argc, char** argv)
   finish = std::chrono::high_resolution_clock::now();
   elapsed = finish - start;
   outFile << "Elapsed time: " << elapsed.count() << " s\n";
+  // cout << "Seed: " << Seed << ", bestQ: " << bestQuality << endl;
   cout << bestQuality << endl;
-  // }
+
+  if (bestQuality > topQuality)
+  {
+    topQuality = bestQuality;
+  }
+  sumQuality = sumQuality + bestQuality;
+  }
+  // cout << "topQuality: " << topQuality << ", avgBestQuality: " << sumQuality/(lastSeed - firstSeed) << endl;
   outFile.close();
   data.close();
   return 0;

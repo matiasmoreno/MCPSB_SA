@@ -4,7 +4,7 @@ prog=MCPSB_SA
 
 #PARAMS = Seed nResets nIterations T0 alpha addP swapP dropP kImprovements path
 #3858 10 10000 226 1.0000 0 0.7100
-PARAMS = 4 50 500000 30 0.999995 0.5 0.0 0.5 0.05 1 MCPSB/Real_Instances/instancia1.mcsb
+PARAMS = 9 10 500000 35 0.99999 0.5 0.0 0.5 0.5 0.01 1 MCPSB/Real_Instances/instancia1.mcsb
 #PARAMS = 1 10 500000 80 0.99999 0.33 0.33 MCPSB/Real_Instances/instancia1.mcsb
 
 debug=0

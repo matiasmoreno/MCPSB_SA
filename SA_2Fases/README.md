@@ -19,6 +19,7 @@ Se pueden manipular las semillas, las instancias y diferentes parametros para la
 | float **swapP** | Probabilidad de seleccionar movimiento Swap en cada iteración |
 | float **dropP** | Probabilidad de seleccionar movimiento Swap en cada iteración |
 | float **kImprovement** | Fracción de **nIterations** para determinar cambio de fase intensificación/diversificación |
+| int **sheduling** | Tipo de scheduling para temperatura: 1 - sinusoidal, 2 - mixto |
 | string **path** | Ruta del archivo de instancia |
 
 Ejemplo de linea de ejecución:
