@@ -20,7 +20,7 @@ Se pueden manipular las semillas, las instancias y diferentes parametros para la
 | float **dropP** | Probabilidad de seleccionar movimiento Drop en diversificación |
 | float **swapI** | Probabilidad de seleccionar movimiento Swap Externo en intensificación |
 | float **kImprovement** | Fracción de **nIterations** para determinar cambio de fase intensificación/diversificación |
-| int **sheduling** | Tipo de scheduling para temperatura: 0 - Polinomial, 1 - Lineal, 2 - Sinusoidal, 3 - Doble Sinusoidal, 4 - Triple Sinusoidal |
+| int **sheduling** | Tipo de scheduling para temperatura: 0 - Exponencial, 1 - Lineal, 2 - Sinusoidal, 3 - Doble Sinusoidal, 4 - Triple Sinusoidal |
 | string **path** | Ruta del archivo de instancia |
 
 Ejemplo de linea de ejecución:

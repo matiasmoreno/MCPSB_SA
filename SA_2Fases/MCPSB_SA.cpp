@@ -16,8 +16,8 @@ using namespace std;
 #define srand48(x) srand((int)(x))
 #define drand48() ((double)rand()/RAND_MAX)
 
-int firstSeed = 0, lastSeed = 5;
-int randLength = 5;
+int firstSeed = 0, nSeeds = 10;
+int randLength = 4;
 int nResets = 100, nIterations = 10000;
 float T0 = 35;
 float alpha = 1;
@@ -286,6 +286,7 @@ float eval(int realPrize[], int minPrize[], float profit[], int ** cost, int nTr
 
 // Seleccionar mejor granja externa
 int getTopRandomExternalFarm(vector <int> routes[], int **cost, int production[], int oProd [], int farmQuality[], int T, int rFarm, int nTrucks, int nFarms, int nQualities, int randLenght, float profit[], int capacity[], vector<int> iQualityFarms[], int origin){
+  cout << "Inicia getTopRandomExternalFarm\n";
   int j, k, loadQ = 1;
   // Obtener calidad de la mezcla en el camion T
   for (j = 1; j < int(routes[T].size() - 1); j++)
@@ -322,6 +323,7 @@ int getTopRandomExternalFarm(vector <int> routes[], int **cost, int production[]
     if ((production[iQualityFarms[loadQ][j]] > 0) && ( (capacity[T] + oProd[ routes[T][rFarm] ]) >= production[iQualityFarms[loadQ][j]]))
     {
       farmValues[realAvailable] = production[iQualityFarms[loadQ][j]] * profit[loadQ] - cost[from][iQualityFarms[loadQ][j]] - cost[iQualityFarms[loadQ][j]][to];
+      cout << "Farm " << iQualityFarms[loadQ][j] << " value: " << farmValues[realAvailable] << endl;
       availableFarms[realAvailable] = iQualityFarms[loadQ][j];
       realAvailable++;
     }
@@ -362,8 +364,151 @@ int getTopRandomExternalFarm(vector <int> routes[], int **cost, int production[]
     }
   }
   // Tomo una granja aleatoria en pickFarm para retornarla
-  return pickFarm[int_rand(0, l)];
+  int randomSelection = int_rand(0, l);
+  int selected = pickFarm[randomSelection];
+  int selectedValue = maxValues[randomSelection];
+  cout << "Picked farm: " << selected << ", value: " << selectedValue << endl;
+  cout << "Termina getTopRandomExternalFarm\n";
+  return selected;
 }
+
+// Seleccionar mejor granja externa v2
+int getTopRandomExternalFarmv2(vector <int> routes[], int **cost, int production[], int oProd [], int farmQuality[], int T, int rFarm, int nTrucks, int nFarms, int nQualities, int randLenght, float profit[], int capacity[], vector<int> iQualityFarms[], int origin){
+  // cout << "Inicia getTopRandomExternalFarmv2\n";
+  int j, k, loadQ = 1;
+  // Obtener calidad de la mezcla en el camion T
+  for (j = 1; j < int(routes[T].size() - 1); j++)
+  {
+    if (farmQuality[ routes[T][j] ] > loadQ)
+    {
+      loadQ = farmQuality[ routes[T][j] ];
+    }
+  }
+  // cout << "Truck Quality Load: " << loadQ << endl;
+  
+  // Busco en las granjas de la calidad actual o superior
+  int available1 = iQualityFarms[1].size();
+  int available2 = iQualityFarms[2].size();
+  int available3 = iQualityFarms[3].size();
+  int available = 0;
+  int realAvailable = 0;
+
+  if (loadQ == 1){
+    available = available1;
+  }
+  else if (loadQ == 2)
+  {
+    available = available1 + available2;
+  }
+  else if (loadQ == 3)
+  {
+    available = available1 + available2 + available3;
+  }
+  
+  // No quedan mas granjas para visitar
+  if (available == 0)
+  {
+    return 0;
+  }
+  
+  // Obtener las granjas posibles y sus beneficios
+  int farmValues[available], availableFarms[available];
+  int from = routes[T][rFarm - 1];
+  int to = routes[T][rFarm + 1];
+  if (from == origin)
+  {
+    from = 0;
+  }
+  if (to == origin)
+  {
+    to = 0;
+  }
+  
+  // Quality 1 Farms
+
+  for (j = 0; j < available1; j++)
+  {
+    if ((production[iQualityFarms[1][j]] > 0) && ( (capacity[T] + oProd[ routes[T][rFarm] ]) >= production[iQualityFarms[1][j]]))
+    {
+      farmValues[realAvailable] = production[iQualityFarms[1][j]] * profit[1] - cost[from][iQualityFarms[1][j]] - cost[iQualityFarms[1][j]][to];
+      // cout << "Farm " << iQualityFarms[1][j] << " Quality 1, value: " << farmValues[realAvailable] << endl;
+      availableFarms[realAvailable] = iQualityFarms[1][j];
+      realAvailable++;
+    }
+  }
+
+  // Quality 2 Farms
+  if (loadQ > 1)
+  {
+    for (j = 0; j < available2; j++)
+    {
+      if ((production[iQualityFarms[2][j]] > 0) && ( (capacity[T] + oProd[ routes[T][rFarm] ]) >= production[iQualityFarms[2][j]]))
+      {
+        farmValues[realAvailable] = production[iQualityFarms[2][j]] * profit[2] - cost[from][iQualityFarms[2][j]] - cost[iQualityFarms[2][j]][to];
+        // cout << "Farm " << iQualityFarms[2][j] << " Quality 2, value: " << farmValues[realAvailable] << endl;
+        availableFarms[realAvailable] = iQualityFarms[2][j];
+        realAvailable++;
+      }
+    }
+  }
+
+  // Quality 3 Farms
+  if (loadQ > 2)
+  {
+    for (j = 0; j < available3; j++)
+    {
+      if ((production[iQualityFarms[3][j]] > 0) && ( (capacity[T] + oProd[ routes[T][rFarm] ]) >= production[iQualityFarms[3][j]]))
+      {
+        farmValues[realAvailable] = production[iQualityFarms[3][j]] * profit[3] - cost[from][iQualityFarms[3][j]] - cost[iQualityFarms[3][j]][to];
+        // cout << "Farm " << iQualityFarms[3][j] << " Quality 3, value: " << farmValues[realAvailable] << endl;
+        availableFarms[realAvailable] = iQualityFarms[3][j];
+        realAvailable++;
+      }
+    }
+  }
+
+  if (realAvailable == 0)
+  {
+    return 0;
+  }
+  // Generar las mejores randLenght granjas
+  int l = (realAvailable < randLenght) ? realAvailable : randLenght; 
+  int maxValues[l], pickFarm[l];
+  for (j = 0; j < l; j++)
+  {
+    maxValues[j] = -999999;
+  }
+  int minValue, minPosition;
+  // j son todas las granjas disponibles
+  for (j = 0; j < realAvailable; j++)
+  {
+    minValue = 999999;
+    // k son los elementos de la lista de pick
+    for (k = 0; k < l; k++)
+    {
+      // Busco el valor minimo dentro de maxValues
+      if (maxValues[k] < minValue)
+      {
+        minValue = maxValues[k];
+        minPosition = k;
+      }
+    }
+    // Si mi farmValues[j] es mayor que el valor minimo, lo reemplazo y guardo la granja en pickFarm
+    if (farmValues[j] > minValue)
+    {
+      maxValues[minPosition] = farmValues[j];
+      pickFarm[minPosition] = availableFarms[j];
+    }
+  }
+  // Tomo una granja aleatoria en pickFarm para retornarla
+  int randomSelection = int_rand(0, l);
+  int selected = pickFarm[randomSelection];
+  int selectedValue = maxValues[randomSelection];
+  // cout << "Picked farm: " << selected << ", value: " << selectedValue << endl;
+  // cout << "Termina getTopRandomExternalFarmv2\n";
+  return selected;
+}
+
 
 // Función miope
 void miopeRand(int randLenght, int i, vector<int> iQualityFarms[], int T, int& randFarm, int capacity[], int oCap[], int position[], int production[], float profit[], int **cost){
@@ -647,7 +792,7 @@ int main(int argc, char** argv)
   // Multiples Seeds
   float topQuality = 0, sumQuality = 0;
 
-  for (Seed = firstSeed; Seed < firstSeed+1; Seed++)
+  for (Seed = firstSeed; Seed < firstSeed + nSeeds; Seed++)
   {
   start = std::chrono::high_resolution_clock::now();
   outFile << endl << "Seed " << Seed << endl;
@@ -839,9 +984,9 @@ int main(int argc, char** argv)
   
   int itRes, it, r, rFarm, rFarm2, auxFarm, rFarmExternal, rTruck, nAvailableF, availableF[nFarms], minDist, dist, minDistPos;
   int noImprovement;
-  float p, operatorP;
+  float p, operatorP, acceptanceP;
   float Temp, addPm, capRatio;
-  bool feasible, intensification, selected;
+  bool feasible, intensification, selected, accepted;
   // Maximun quantity of iterations with no quality improvements
   float MaxImprovements = kImprovement * nIterations;
   for (itRes = 0; itRes < nResets; itRes++)
@@ -852,7 +997,7 @@ int main(int argc, char** argv)
     resetBestQuality = 0;
     for (it = 0; it < nIterations; it++)
     {
-      if (noImprovement >= MaxImprovements && it > (nIterations*0))
+      if (noImprovement >= MaxImprovements && it > (nIterations*0.0))
       {
         intensification = !intensification;
         noImprovement = 0;
@@ -933,7 +1078,7 @@ int main(int argc, char** argv)
           if (int(actualRoutes[rTruck].size()) > 2)
           {
             rFarm = int_rand(1, actualRoutes[rTruck].size() - 1);
-            rFarmExternal = getTopRandomExternalFarm(actualRoutes, cost, production, oProd, farmQuality, rTruck, rFarm, nTrucks, nFarms, nQualities, randLength, profit, capacity, iQualityFarms, origin);
+            rFarmExternal = getTopRandomExternalFarmv2(actualRoutes, cost, production, oProd, farmQuality, rTruck, rFarm, nTrucks, nFarms, nQualities, randLength, profit, capacity, iQualityFarms, origin);
 
             if (rFarmExternal != 0)
             {
@@ -993,7 +1138,7 @@ int main(int argc, char** argv)
           if (int(actualRoutes[rTruck].size()) > 2)
           {
             rFarm = int_rand(1, actualRoutes[rTruck].size() - 1);
-            rFarmExternal = getTopRandomExternalFarm(actualRoutes, cost, production, oProd, farmQuality, rTruck, rFarm, nTrucks, nFarms, nQualities, randLength, profit, capacity, iQualityFarms, origin);
+            rFarmExternal = getTopRandomExternalFarmv2(actualRoutes, cost, production, oProd, farmQuality, rTruck, rFarm, nTrucks, nFarms, nQualities, randLength, profit, capacity, iQualityFarms, origin);
 
             if (rFarmExternal != 0)
             {
@@ -1064,16 +1209,30 @@ int main(int argc, char** argv)
       // Factibilidad del cambio
       if (feasible)
       {
+        accepted = false;
         nUpdates++;
         newQuality = eval(newRealPrize, minPrize, profit, cost, nTrucks, newRoutes, newIncome, newCost);
-        
+        acceptanceP = float_rand(0,1);
+
         if (intensification)
         {
-          p = exp((newQuality - actualQuality)/(Temp*0.01));
+          /* p = exp((newQuality - actualQuality)/(Temp*0.01));
+          if (p > acceptanceP) // Se acepta el movimiento
+          {
+            accepted = true;
+          } */
+          if (newQuality > actualQuality) // Si la nueva solución es mejor que la anterior la acepto
+          {
+            accepted = true;
+          }
         }
         else
         {
           p = exp((newQuality - actualQuality)/Temp);
+          if (p > acceptanceP) // Se acepta el movimiento
+          {
+            accepted = true;
+          }
         }
         
         if (newQuality < actualQuality) // Si la nueva solución es peor que la anterior sumo al contador
@@ -1081,7 +1240,7 @@ int main(int argc, char** argv)
           noImprovement++;
         }
 
-        if (p > float_rand(0,1)) // Se acepta el movimiento
+        if (accepted)
         {
           if (newQuality < actualQuality)
           {
@@ -1249,7 +1408,6 @@ int main(int argc, char** argv)
   }
   sumQuality = sumQuality + bestQuality;
   }
-  // cout << "topQuality: " << topQuality << ", avgBestQuality: " << sumQuality/(lastSeed - firstSeed) << endl;
   outFile.close();
   data.close();
   return 0;
