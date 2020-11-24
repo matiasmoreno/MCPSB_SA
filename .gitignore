@@ -31,8 +31,8 @@
 *.a
 *.lib
 
-# Images
-*.png
+# Images form data
+SA_2Fases/data/*.png
 
 # Executables
 *.exe
