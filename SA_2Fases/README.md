@@ -15,15 +15,14 @@ Se pueden manipular las semillas, las instancias y diferentes parametros para la
 | int **nIterations** | Cantidad de iteraciones por cada reinicio |
 | float **T0** | Temperatura máxima del sistema |
 | float **alpha** | Tasa de enfriamiento |
-| float **addP** | Probabilidad de seleccionar movimiento Añadir en diversificación |
-| float **swapP** | Probabilidad de seleccionar movimiento Swap Externo en diversificación |
-| float **dropP** | Probabilidad de seleccionar movimiento Drop en diversificación |
-| float **swapI** | Probabilidad de seleccionar movimiento Swap Externo en intensificación |
+| float **addP** | Probabilidad de seleccionar movimiento Añadir en diversificación 0-1 |
+| float **swapI** | Probabilidad de seleccionar movimiento Swap Externo en intensificación 0-1|
 | float **kImprovement** | Fracción de **nIterations** para determinar cambio de fase intensificación/diversificación |
+| float **intensificationRatio** | Razón entre total de iteraciones de fases intensificación / diversificación |
 | int **sheduling** | Tipo de scheduling para temperatura: 0 - Exponencial, 1 - Lineal, 2 - Sinusoidal, 3 - Doble Sinusoidal, 4 - Triple Sinusoidal |
 | string **path** | Ruta del archivo de instancia |
 
 Ejemplo de linea de ejecución:
 ```sh
-$ ./MCPSB_SA 1 10 500000 80 0.99999 0.33 0.33 0.33 0.01 MCPSB/Real_Instances/instancia1.mcsb
+$ ./1 200 500000 35 0.99999 0.5 0.5 0.01 0.5 1 MCPSB/Real_Instances/instancia1.0.mcsb
 ```

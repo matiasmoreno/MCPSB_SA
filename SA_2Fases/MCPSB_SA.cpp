@@ -16,20 +16,21 @@ using namespace std;
 #define srand48(x) srand((int)(x))
 #define drand48() ((double)rand()/RAND_MAX)
 
-int firstSeed = 0, nSeeds = 10;
+int firstSeed = 0, nSeeds = 1;
 int randLength = 4;
 int nResets = 100, nIterations = 10000;
 float T0 = 35;
 float alpha = 1;
 float addP = 0.33;
-float swapP = 0.33;
-float dropP = 0.33;
+//float swapP = 0.33;
+//float dropP = 0.33;
 float swapI = 0.5;
 float alphaCtrl = 0;
 float kImprovement = 0.01;
 int Seed;
 int schedule = 0;
 int sineOff = 5;
+float intensificationRatio = 1;
 string path;
 
 void Capture_Params(int argc, char **argv){
@@ -40,12 +41,11 @@ void Capture_Params(int argc, char **argv){
     T0 = atof(argv[4]);
     alpha = atof(argv[5]);
     addP = atof(argv[6]);
-    swapP = atof(argv[7]);
-    dropP = atof(argv[8]);
-    swapI = atof(argv[9]);
-    kImprovement = atof(argv[10]);
-    schedule = atoi(argv[11]);
-    path = argv[12];
+    swapI = atof(argv[7]);
+    kImprovement = atof(argv[8]);
+    intensificationRatio = atof(argv[9]);
+    schedule = atoi(argv[10]);
+    path = argv[11];
 }
 
 float float_rand(float a, float b) {
@@ -593,10 +593,7 @@ void miopeRand(int randLenght, int i, vector<int> iQualityFarms[], int T, int& r
 int main(int argc, char** argv)
 {
   Capture_Params(argc,argv);
-  float sumaP = addP + swapP + dropP;
-  addP = addP/sumaP;
-  swapP = swapP/sumaP;
-  dropP = dropP/sumaP;
+  // dropP = 1 - addP;
   ifstream inFile;
 
   int nFarms, nTrucks, i, j, origin;
@@ -997,10 +994,21 @@ int main(int argc, char** argv)
     resetBestQuality = 0;
     for (it = 0; it < nIterations; it++)
     {
-      if (noImprovement >= MaxImprovements && it > (nIterations*0.0))
+      if (intensification)
       {
-        intensification = !intensification;
-        noImprovement = 0;
+        if (noImprovement >= MaxImprovements*intensificationRatio && it > (nIterations*0.0))
+        {
+          intensification = !intensification;
+          noImprovement = 0;
+        }
+      }
+      else
+      {
+        if (noImprovement >= MaxImprovements && it > (nIterations*0.0))
+        {
+          intensification = !intensification;
+          noImprovement = 0;
+        }
       }
       
       feasible = false;
@@ -1072,7 +1080,7 @@ int main(int argc, char** argv)
           }
         }
         
-        else if (addP + swapP > operatorP) // Swap Externo
+        /* else if (addP + swapP > operatorP) // Swap Externo
         {
           // Se puede hacer swap solo si existe un nodo presente
           if (int(actualRoutes[rTruck].size()) > 2)
@@ -1102,7 +1110,7 @@ int main(int argc, char** argv)
               }
             }
           }
-        }
+        } */
         
         else // Quitar nodo de una ruta
         {

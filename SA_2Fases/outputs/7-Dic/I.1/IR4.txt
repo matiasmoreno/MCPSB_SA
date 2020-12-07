@@ -1,0 +1,161 @@
+MCPSB/Real_Instances/instancia4.mcsb  nFarms: 31  nTrucks: 3  MinPrizeQuality 1-2-3: 8997-41658-8634
+
+Seed 1
+** GRASP **  Q: 344.344, Income: 1234.34, Cost: 890  PrizeCollected (1-2-3): 9394 41658 8634
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q1 1000-31-4-22-16-19-1-13-25-1000 522 29857
+Truck 2 Q2 1000-26-8-5-23-11-17-2-1000 368 29829
+Truck 3 Q1 1000-1000 0 0
+Elapsed time: 0.0001561 s
+
+** SA ** nReset: 200  nIt: 500000
+Quality: 1251.47, Income: 1954.47, Cost: 703  PrizeCollected (1-2-3): 29318 47487 8634
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q2 1000-2-13-14-17-10-31-26-1000 219 26937
+Truck 2 Q2 1000-16-5-19-1-23-22-8-1000 175 29184
+Truck 3 Q1 1000-25-4-7-28-1000 309 29318
+Elapsed time: 108.065 s
+
+Seed 2
+** GRASP **  Q: 342.55, Income: 1670.55, Cost: 1328  PrizeCollected (1-2-3): 17588 41658 29788
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q1 1000-7-22-16-19-4-1-1000 504 29417
+Truck 2 Q2 1000-8-23-26-11-17-5-2-1000 372 29829
+Truck 3 Q3 1000-27-15-6-30-12-9-20-1000 452 29788
+Elapsed time: 7.68e-05 s
+
+** SA ** nReset: 200  nIt: 500000
+Quality: 1251.47, Income: 1954.47, Cost: 703  PrizeCollected (1-2-3): 29318 47487 8634
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q2 1000-8-22-23-1-19-5-16-1000 175 29184
+Truck 2 Q2 1000-14-13-2-17-26-31-10-1000 219 26937
+Truck 3 Q1 1000-25-4-7-28-1000 309 29318
+Elapsed time: 99.0001 s
+
+Seed 3
+** GRASP **  Q: 388.056, Income: 1663.06, Cost: 1275  PrizeCollected (1-2-3): 17367 41658 29692
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q1 1000-7-28-4-13-1-1000 412 29849
+Truck 2 Q2 1000-23-8-17-14-2-5-20-11-29-25-31-1000 551 29176
+Truck 3 Q3 1000-27-24-3-18-9-19-1000 312 29692
+Elapsed time: 8.56e-05 s
+
+** SA ** nReset: 200  nIt: 500000
+Quality: 1251.47, Income: 1954.47, Cost: 703  PrizeCollected (1-2-3): 29318 47487 8634
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q1 1000-25-4-7-28-1000 309 29318
+Truck 2 Q2 1000-16-5-19-1-23-22-8-1000 175 29184
+Truck 3 Q2 1000-26-31-10-17-2-14-13-1000 219 26937
+Elapsed time: 98.7821 s
+
+Seed 4
+** GRASP **  Q: 551.885, Income: 1641.89, Cost: 1090  PrizeCollected (1-2-3): 17207 41658 27873
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q1 1000-31-22-16-4-25-13-1-19-1000 562 29857
+Truck 2 Q2 1000-23-5-26-20-11-29-17-2-14-1000 334 29008
+Truck 3 Q3 1000-27-21-9-1000 194 27873
+Elapsed time: 7.75e-05 s
+
+** SA ** nReset: 200  nIt: 500000
+Quality: 1251.47, Income: 1954.47, Cost: 703  PrizeCollected (1-2-3): 29318 47487 8634
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q1 1000-28-7-4-25-1000 309 29318
+Truck 2 Q2 1000-8-22-23-1-19-5-16-1000 175 29184
+Truck 3 Q2 1000-26-31-10-17-13-14-2-1000 219 26937
+Elapsed time: 103.071 s
+
+Seed 5
+** GRASP **  Q: 524.594, Income: 1236.59, Cost: 712  PrizeCollected (1-2-3): 9469 41658 8634
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q1 1000-28-22-25-1000 284 29932
+Truck 2 Q2 1000-23-26-17-5-8-11-2-1000 428 29829
+Truck 3 Q1 1000-1000 0 0
+Elapsed time: 7.57e-05 s
+
+** SA ** nReset: 200  nIt: 500000
+Quality: 1248.91, Income: 1942.91, Cost: 694  PrizeCollected (1-2-3): 28033 48772 8634
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q2 1000-26-31-25-23-1-19-5-16-1000 251 29244
+Truck 2 Q1 1000-4-7-28-1000 275 28033
+Truck 3 Q2 1000-13-14-2-17-8-22-10-1000 168 28162
+Elapsed time: 102.641 s
+
+Seed 6
+** GRASP **  Q: 281.881, Income: 1642.88, Cost: 1361  PrizeCollected (1-2-3): 16768 41658 29447
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q1 1000-22-10-31-4-25-19-1-1000 418 29418
+Truck 2 Q2 1000-23-5-17-26-20-29-14-2-11-1000 554 29008
+Truck 3 Q3 1000-24-30-15-6-12-9-8-1000 389 29447
+Elapsed time: 0.0001174 s
+
+** SA ** nReset: 200  nIt: 500000
+Quality: 1251.47, Income: 1954.47, Cost: 703  PrizeCollected (1-2-3): 29318 47487 8634
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q2 1000-13-14-2-17-26-31-10-1000 219 26937
+Truck 2 Q2 1000-8-22-23-1-19-5-16-1000 175 29184
+Truck 3 Q1 1000-28-7-4-25-1000 309 29318
+Elapsed time: 104.36 s
+
+Seed 7
+** GRASP **  Q: 209.654, Income: 1224.65, Cost: 1015  PrizeCollected (1-2-3): 9071 41658 8634
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q1 1000-28-31-7-1-19-1000 343 29874
+Truck 2 Q2 1000-8-17-2-14-5-23-11-29-20-16-4-1000 672 29489
+Truck 3 Q1 1000-1000 0 0
+Elapsed time: 7.91e-05 s
+
+** SA ** nReset: 200  nIt: 500000
+Quality: 1251.47, Income: 1954.47, Cost: 703  PrizeCollected (1-2-3): 29318 47487 8634
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q1 1000-28-7-4-25-1000 309 29318
+Truck 2 Q2 1000-16-5-19-1-23-22-8-1000 175 29184
+Truck 3 Q2 1000-2-13-14-17-10-31-26-1000 219 26937
+Elapsed time: 103.198 s
+
+Seed 8
+** GRASP **  Q: 52.7949, Income: 1605.79, Cost: 1553  PrizeCollected (1-2-3): 15896 41658 28233
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q1 1000-28-31-10-19-16-1-25-1000 337 28780
+Truck 2 Q2 1000-17-23-8-11-5-29-14-20-2-13-4-1000 872 28774
+Truck 3 Q3 1000-27-15-30-24-12-9-1000 344 28233
+Elapsed time: 9.12e-05 s
+
+** SA ** nReset: 200  nIt: 500000
+Quality: 1251.47, Income: 1954.47, Cost: 703  PrizeCollected (1-2-3): 29318 47487 8634
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q1 1000-28-7-4-25-1000 309 29318
+Truck 2 Q2 1000-2-13-14-17-10-31-26-1000 219 26937
+Truck 3 Q2 1000-8-22-23-1-19-5-16-1000 175 29184
+Elapsed time: 105.346 s
+
+Seed 9
+** GRASP **  Q: 455.937, Income: 1655.94, Cost: 1200  PrizeCollected (1-2-3): 17292 41658 29151
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q1 1000-22-7-16-4-25-1-1000 496 29794
+Truck 2 Q2 1000-8-26-11-20-29-17-2-23-1000 374 29156
+Truck 3 Q3 1000-15-30-3-27-9-1000 330 29151
+Elapsed time: 8.1e-05 s
+
+** SA ** nReset: 200  nIt: 500000
+Quality: 1251.47, Income: 1954.47, Cost: 703  PrizeCollected (1-2-3): 29318 47487 8634
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q2 1000-2-13-14-17-10-31-26-1000 219 26937
+Truck 2 Q2 1000-8-22-23-1-19-5-16-1000 175 29184
+Truck 3 Q1 1000-25-4-7-28-1000 309 29318
+Elapsed time: 111.756 s
+
+Seed 10
+** GRASP **  Q: 375.214, Income: 1229.21, Cost: 854  PrizeCollected (1-2-3): 9223 41658 8634
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q1 1000-7-31-10-22-1000 298 29799
+Truck 2 Q2 1000-17-26-8-5-2-14-11-20-19-25-1000 556 29716
+Truck 3 Q1 1000-1000 0 0
+Elapsed time: 0.0001131 s
+
+** SA ** nReset: 200  nIt: 500000
+Quality: 1250.47, Income: 1954.47, Cost: 704  PrizeCollected (1-2-3): 29318 47487 8634
+Truck N / Load Quality / Visited Farms / Distance / Total Load
+Truck 1 Q1 1000-28-7-4-25-1000 309 29318
+Truck 2 Q2 1000-16-5-19-1-23-31-26-1000 227 27959
+Truck 3 Q2 1000-8-22-10-17-2-14-13-1000 168 28162
+Elapsed time: 124.633 s

@@ -120,7 +120,7 @@ def plotRoute(instance):
         plt.arrow(arrow[0], arrow[1], (arrow[2]-arrow[0])*0.2, (arrow[3]-arrow[1])*0.2, width=0.001, edgecolor='black', facecolor=routeQualityColor)
         plt.plot(routex, routey, color=colors[r-1], linestyle='--', linewidth = 1.2)
     
-    plt.savefig(os.path.dirname(__file__) + '/Instance{}/Routes{}.png'.format(instance, instance))
+    plt.savefig(os.path.dirname(__file__) + '/Instance{}/Routes{}.0.png'.format(instance, instance))
     print('/Instance{}/Routes{}.png'.format(instance, instance))
 
 for i in range(1,6):
