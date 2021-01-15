@@ -12,6 +12,22 @@ def readInstance(real, i):
     found = False
     while not found:
         line = file.readline()
+        if line.strip() == 'param P:=':
+            found = True
+
+    found = False
+    demands = []
+    while not found:
+        line = file.readline()
+        if line.strip() == ';':
+            found = True
+            break
+        minimun = int(line)
+        demands.append(minimun)
+
+    found = False
+    while not found:
+        line = file.readline()
         if line.strip() == 'param qu:=':
             found = True
 
@@ -58,7 +74,7 @@ def readInstance(real, i):
         
 
     file.close()
-    return prodInstancia, farmByQuality, cost
+    return prodInstancia, farmByQuality, cost, demands
 
 #Returns a dictionary {production: farm} with productions of farms
 def readProductions():
@@ -100,6 +116,13 @@ def readCoordinates():
 def readRoutes(i, origin = 1000):
     file = open(os.path.dirname(__file__) + '/Instance{}/routes{}.dat'.format(i, i), 'r')
 
+    outputs = list()
+
+    line = file.readline()
+    line = line.replace('\n', '')
+    splitted = line.split(" ")
+    outputs = [float(i) for i in splitted]
+
     routes = list()
 
     while True:
@@ -111,4 +134,4 @@ def readRoutes(i, origin = 1000):
         splitted = [0 if int(i) == origin else int(i) for i in splitted]
         routes.append(splitted)
     
-    return routes
+    return routes, outputs

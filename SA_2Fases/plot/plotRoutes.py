@@ -9,12 +9,12 @@ import os.path
 
 def plotRoute(instance):
     # Read Data Files
-    farmProduction, farmByQuality, cost = readInstance(True, instance)
+    farmProduction, farmByQuality, cost, demands = readInstance(True, instance)
     productions = readProductions()
     coordOrigin, coordinates = readCoordinates()
 
     # Read Routes
-    routes = readRoutes(instance, 1000)
+    routes, outputs = readRoutes(instance, 1000)
         
     # Plot figure
     plt.figure(num=None, figsize=(50, 50), dpi=100, facecolor='white', edgecolor='black')

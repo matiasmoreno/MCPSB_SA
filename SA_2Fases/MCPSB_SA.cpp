@@ -16,7 +16,7 @@ using namespace std;
 #define srand48(x) srand((int)(x))
 #define drand48() ((double)rand()/RAND_MAX)
 
-int firstSeed = 0, nSeeds = 1;
+int firstSeed = 0, nSeeds = 20;
 int randLength = 4;
 int nResets = 100, nIterations = 10000;
 float T0 = 35;
@@ -776,6 +776,7 @@ int main(int argc, char** argv)
 
   // Record start time
   auto start = std::chrono::high_resolution_clock::now();
+  auto bestQualityTime = std::chrono::high_resolution_clock::now();
   ofstream outFile;
   outFile.open ("outputs/out.txt");
 
@@ -792,7 +793,7 @@ int main(int argc, char** argv)
   for (Seed = firstSeed; Seed < firstSeed + nSeeds; Seed++)
   {
   start = std::chrono::high_resolution_clock::now();
-  outFile << endl << "Seed " << Seed << endl;
+  //outFile << endl << "Seed " << Seed << endl;
   srand48(Seed);
 
   // Crear nTrucks vectores dinamicos para generar las rutas de cada camion
@@ -915,9 +916,9 @@ int main(int argc, char** argv)
   measureDist(distance, nTrucks, actualRoutes, cost);
   getLoadQuality(loadQuality, farmQuality, actualRoutes, nTrucks);
 
-  // Escribir solución
+  // Escribir solución GRASP
       
-  outFile << "** GRASP **  Q: " << actualQuality << ", Income: " << bestIncome << ", Cost: " << bestCost << "  PrizeCollected (1-2-3): " << finalPrize[1] << " " << finalPrize[2] << " " << finalPrize[3] << endl;
+  /* outFile << "** GRASP **  Q: " << actualQuality << ", Income: " << bestIncome << ", Cost: " << bestCost << "  PrizeCollected (1-2-3): " << finalPrize[1] << " " << finalPrize[2] << " " << finalPrize[3] << endl;
   outFile << "Truck N / Load Quality / Visited Farms / Distance / Total Load" << endl;
   for (i = 1; i < nTrucks; i++)
   {
@@ -943,11 +944,11 @@ int main(int argc, char** argv)
         } 
       }
     }
-  }
+  } */
   // Record end time
   auto finish = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> elapsed = finish - start;
-  outFile << "Elapsed time: " << elapsed.count() << " s\n";
+  //outFile << "Elapsed time: " << elapsed.count() << " s\n";
   
   float bestQuality = actualQuality, newQuality, resetBestQuality;
 
@@ -1281,6 +1282,7 @@ int main(int argc, char** argv)
           // Checkear actualquality con bestQuality
           if (bestQuality < actualQuality)
           {
+            bestQualityTime = std::chrono::high_resolution_clock::now();
             bestQuality = actualQuality;
             bestCost = newCost;
             bestIncome = newIncome;
@@ -1374,7 +1376,7 @@ int main(int argc, char** argv)
   getRealPrize(bestRealPrize, bestRoutes, nTrucks, nQualities, oProd, farmQuality);
   bestBlend(finalPrize, bestRealPrize, minPrize);
 
-  // Escribir mejor solución
+  /* // Escribir mejor solución 2 Phases
   outFile << "\n** SA ** nReset: " << nResets << "  nIt: " << nIterations << endl;
   outFile << "Quality: " << bestQuality << ", Income: " << bestIncome << ", Cost: " << bestCost <<  "  PrizeCollected (1-2-3): " << finalPrize[1] << " " << finalPrize[2] << " " << finalPrize[3] << endl;
   outFile << "Truck N / Load Quality / Visited Farms / Distance / Total Load" << endl;
@@ -1402,11 +1404,13 @@ int main(int argc, char** argv)
         } 
       }
     }
-  }
+  } */
 
   finish = std::chrono::high_resolution_clock::now();
   elapsed = finish - start;
-  outFile << "Elapsed time: " << elapsed.count() << " s\n";
+  std::chrono::duration<double> timeToBest = bestQualityTime - start;
+  outFile << Seed << ";" << bestQuality << ";" << timeToBest.count() << ";" << elapsed.count() << "\n";
+  //outFile << "Elapsed time: " << elapsed.count() << " s\n";
   // cout << "Seed: " << Seed << ", bestQ: " << bestQuality << endl;
   cout << bestQuality << endl;
 
