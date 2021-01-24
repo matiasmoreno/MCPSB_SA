@@ -924,6 +924,7 @@ int main(int argc, char** argv)
     
     vector <int> bestRoutes[nTrucks];
     vector <int> newRoutes[nTrucks];
+    vector <int> originalRoute;
     for (i = 1; i < nTrucks; i++)
     {
       bestRoutes[i] = actualRoutes[i];
@@ -952,20 +953,108 @@ int main(int argc, char** argv)
       noImprovement = 0;
       intensification = false;
       resetBestQuality = 0;
-      if (itRes > 0)
+      
+      if (it > 0)
       {
         // Evaluate routes - select route with max oportunity cost
+
         rTruck = getMaxOportunityCostRoute(actualRoutes, oProd, farmQuality, nQualities, profit, nTrucks);
+        int rTruckQuality = getRouteQuality(actualRoutes, rTruck, farmQuality);
 
         //  Save original Route
+        originalRoute = actualRoutes[rTruck];
+
         // Remove conflict route
+        actualRoutes[rTruck].clear();
+        actualRoutes[rTruck].push_back(origin);
+        actualRoutes[rTruck].push_back(origin);
+        getRealPrize(actualRealPrize, actualRoutes, nTrucks, nQualities, oProd, farmQuality);
+        getCapacity(capacity, oCap, oProd, actualRoutes, nTrucks);
+        getProduction(production, oProd, actualRoutes, nTrucks, nFarms);
+
+        actualRoutes[rTruck].clear();
+        actualRoutes[rTruck].push_back(origin);
+        position[rTruck] = 0;
+
+        // Re-build Route
+
+        // Repetir ciclo hasta llenar el camión de producto
+        
+        while (true)
+        {
+          miopeRand(randLength, rTruckQuality, iQualityFarms, rTruck, randFarm, capacity, oCap, position, production, profit, cost);
+          // Cada uno de estos ciclos termina cuando el camión se llena de producto
+          // cout << "randFarm " << randFarm << endl;
+          if (randFarm == 0)
+          {
+            break;
+          }
+          
+          actualRoutes[rTruck].push_back(randFarm);
+          position[rTruck] = randFarm;
+          capacity[rTruck] -= production[randFarm];
+          actualRealPrize[rTruckQuality] += production[randFarm];
+          production[randFarm] = 0;
+        }
+
+        actualRoutes[rTruck].push_back(origin);
+
         // Check Factibility
-        // Build route again if necessary
+        getRealPrize(actualRealPrize, actualRoutes, nTrucks, nQualities, oProd, farmQuality);
+        if (feasibility(actualRealPrize, minPrize, actualRoutes))
+        {
+          //cout << "Si fue posible borrar y reconstruir la ruta " << rTruck << endl;
+          // actualizar production, capacity
+          getCapacity(capacity, oCap, oProd, actualRoutes, nTrucks);
+          getProduction(production, oProd, actualRoutes, nTrucks, nFarms);
+          newRoutes[rTruck] = actualRoutes[rTruck];
+        }
         // Build only with quality equal to original, no blending if possible
+
+        else
+        {
+          // Restore route again if necessary
+          actualRoutes[rTruck] = originalRoute;
+          getRealPrize(actualRealPrize, actualRoutes, nTrucks, nQualities, oProd, farmQuality);
+          getCapacity(capacity, oCap, oProd, actualRoutes, nTrucks);
+          getProduction(production, oProd, actualRoutes, nTrucks, nFarms);
+        }
+
+        getLoadQuality(loadQuality, farmQuality, actualRoutes, nTrucks);
+        measureDist(distance, nTrucks, actualRoutes, cost);
+
+        /* for (i = 1; i < nTrucks; i++)
+        {
+          if (actualRoutes[i].size() != 0)
+          { 
+            cout << "Truck " << i << " Q" << loadQuality[i] << " ";
+            for (j = 0; j < int(actualRoutes[i].size()); j++)
+            {
+              if (actualRoutes[i][j] == origin)
+              {
+                if (j == 0)
+                {
+                  cout << origin << "-";
+                }
+                else
+                {
+                  cout << origin << " " << distance[i] << " load: " << oCap[i] - capacity[i] << endl;
+                } 
+              }
+              else
+              {
+                cout << actualRoutes[i][j] << "-";
+              } 
+            }
+          }
+        } 
+        cout << endl;*/
       }
-      
       for (it = 0; it < nIterations; it++)
       {
+
+
+
         if (intensification)
         {
           if (noImprovement >= MaxImprovements*intensificationRatio && it > (nIterations*0.0))
@@ -986,7 +1075,6 @@ int main(int argc, char** argv)
         feasible = false;
         operatorP = float_rand(0,1);
         rTruck = int_rand(1, nTrucks);
-
         if (!intensification)
         {
           if (addP > operatorP) // Añadir nodo factible
@@ -1050,7 +1138,6 @@ int main(int argc, char** argv)
               }
             }
           }
-          
           else // Quitar nodo de una ruta
           {
             // La ruta siempre tiene el nodo de origen y destino
@@ -1077,7 +1164,6 @@ int main(int argc, char** argv)
             }
           }
         }
-        
         if (intensification) // Fase de Intensificacion
         {
           if (swapI > operatorP){ // Swap Externo
@@ -1152,7 +1238,6 @@ int main(int argc, char** argv)
             }
           }
         }
-        
         // Factibilidad del cambio
         if (feasible)
         {
@@ -1298,6 +1383,33 @@ int main(int argc, char** argv)
         {
           Temp = 0;
         }
+        /* measureDist(distance, nTrucks, actualRoutes, cost);
+        cout << "** after iteration **" << endl;
+        for (i = 1; i < nTrucks; i++)
+        {
+          if (actualRoutes[i].size() != 0)
+          { 
+            cout << "Truck " << i << " Q" << loadQuality[i] << " ";
+            for (j = 0; j < int(actualRoutes[i].size()); j++)
+            {
+              if (actualRoutes[i][j] == origin)
+              {
+                if (j == 0)
+                {
+                  cout << origin << "-";
+                }
+                else
+                {
+                  cout << origin << " " << distance[i] << " load: " << oCap[i] - capacity[i] << endl;
+                } 
+              }
+              else
+              {
+                cout << actualRoutes[i][j] << "-";
+              } 
+            }
+          }
+        } */
       }
     }
     
@@ -1313,6 +1425,7 @@ int main(int argc, char** argv)
     // Calcular la mejor mezcla en planta final
     getRealPrize(bestRealPrize, bestRoutes, nTrucks, nQualities, oProd, farmQuality);
     bestBlend(finalPrize, bestRealPrize, minPrize);
+    
     /*
     // Escribir mejor solución 2 Phases
     outFile << "\n** SA ** nReset: " << nResets << "  nIt: " << nIterations << endl;
