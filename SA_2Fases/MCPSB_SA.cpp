@@ -1204,6 +1204,14 @@ int main(int argc, char** argv)
       {
         noImprovement++;
       }
+      totalIt++;
+      if (totalIt % 50 == 0) // Escribo en el CSV
+      {
+        p = std::ceil(p * 100.0) / 100.0;
+        data << totalIt << "," << Temp << "," << actualQuality << "," << topQuality << "," << float(acceptedDowngrades)/float(nUpdates)*100 << "," << intensification << "\n";
+        nUpdates = 0;
+        acceptedDowngrades = 0;
+      }
 
       switch (schedule)  { // Control de temperatura
         case 0: // Polinomial
