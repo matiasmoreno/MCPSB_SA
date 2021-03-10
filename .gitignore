@@ -33,6 +33,7 @@
 
 # Images form data
 SA_2Fases/data/*.png
+SA_2Fases/data/*.csv
 SA_2Fases2
 SA_2Fases3
 SA_2Fases4
