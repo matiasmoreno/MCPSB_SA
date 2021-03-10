@@ -1409,7 +1409,8 @@ int main(int argc, char** argv)
   finish = std::chrono::high_resolution_clock::now();
   elapsed = finish - start;
   std::chrono::duration<double> timeToBest = bestQualityTime - start;
-  outFile << Seed << ";" << bestQuality << ";" << timeToBest.count() << ";" << elapsed.count() << "\n";
+  outFile << bestQuality << "\n";
+  //outFile << Seed << ";" << bestQuality << ";" << timeToBest.count() << ";" << elapsed.count() << "\n";
   //outFile << "Elapsed time: " << elapsed.count() << " s\n";
   // cout << "Seed: " << Seed << ", bestQ: " << bestQuality << endl;
   cout << bestQuality << endl;
