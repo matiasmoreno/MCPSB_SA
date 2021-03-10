@@ -16,7 +16,7 @@ using namespace std;
 #define srand48(x) srand((int)(x))
 #define drand48() ((double)rand()/RAND_MAX)
 
-int firstSeed = 0, nSeeds = 1;
+int firstSeed = 0, nSeeds = 20;
 int randLength = 10;
 int nResets = 100, nIterations = 10000;
 float T0 = 35;
@@ -954,107 +954,162 @@ int main(int argc, char** argv)
       intensification = false;
       resetBestQuality = 0;
       
-      if (it > 0)
+      if (itRes > 0)
       {
         // Evaluate routes - select route with max oportunity cost
 
         rTruck = getMaxOportunityCostRoute(actualRoutes, oProd, farmQuality, nQualities, profit, nTrucks);
-        int rTruckQuality = getRouteQuality(actualRoutes, rTruck, farmQuality);
-
-        //  Save original Route
-        originalRoute = actualRoutes[rTruck];
-
-        // Remove conflict route
-        actualRoutes[rTruck].clear();
-        actualRoutes[rTruck].push_back(origin);
-        actualRoutes[rTruck].push_back(origin);
-        getRealPrize(actualRealPrize, actualRoutes, nTrucks, nQualities, oProd, farmQuality);
-        getCapacity(capacity, oCap, oProd, actualRoutes, nTrucks);
-        getProduction(production, oProd, actualRoutes, nTrucks, nFarms);
-
-        actualRoutes[rTruck].clear();
-        actualRoutes[rTruck].push_back(origin);
-        position[rTruck] = 0;
-
-        // Re-build Route
-
-        // Repetir ciclo hasta llenar el camión de producto
-        
-        while (true)
+        if (rTruck > 0)
         {
-          miopeRand(randLength, rTruckQuality, iQualityFarms, rTruck, randFarm, capacity, oCap, position, production, profit, cost);
-          // Cada uno de estos ciclos termina cuando el camión se llena de producto
-          // cout << "randFarm " << randFarm << endl;
-          if (randFarm == 0)
+          /* for (i = 1; i < nTrucks; i++)
           {
-            break;
-          }
-          
-          actualRoutes[rTruck].push_back(randFarm);
-          position[rTruck] = randFarm;
-          capacity[rTruck] -= production[randFarm];
-          actualRealPrize[rTruckQuality] += production[randFarm];
-          production[randFarm] = 0;
-        }
-
-        actualRoutes[rTruck].push_back(origin);
-
-        // Check Factibility
-        getRealPrize(actualRealPrize, actualRoutes, nTrucks, nQualities, oProd, farmQuality);
-        if (feasibility(actualRealPrize, minPrize, actualRoutes))
-        {
-          //cout << "Si fue posible borrar y reconstruir la ruta " << rTruck << endl;
-          // actualizar production, capacity
-          getCapacity(capacity, oCap, oProd, actualRoutes, nTrucks);
-          getProduction(production, oProd, actualRoutes, nTrucks, nFarms);
-          newRoutes[rTruck] = actualRoutes[rTruck];
-        }
-        // Build only with quality equal to original, no blending if possible
-
-        else
-        {
-          // Restore route again if necessary
-          actualRoutes[rTruck] = originalRoute;
-          getRealPrize(actualRealPrize, actualRoutes, nTrucks, nQualities, oProd, farmQuality);
-          getCapacity(capacity, oCap, oProd, actualRoutes, nTrucks);
-          getProduction(production, oProd, actualRoutes, nTrucks, nFarms);
-        }
-
-        getLoadQuality(loadQuality, farmQuality, actualRoutes, nTrucks);
-        measureDist(distance, nTrucks, actualRoutes, cost);
-
-        /* for (i = 1; i < nTrucks; i++)
-        {
-          if (actualRoutes[i].size() != 0)
-          { 
-            cout << "Truck " << i << " Q" << loadQuality[i] << " ";
-            for (j = 0; j < int(actualRoutes[i].size()); j++)
-            {
-              if (actualRoutes[i][j] == origin)
+            if (actualRoutes[i].size() != 0)
+            { 
+              cout << "Truck " << i << " Q" << loadQuality[i] << " ";
+              for (j = 0; j < int(actualRoutes[i].size()); j++)
               {
-                if (j == 0)
+                if (actualRoutes[i][j] == origin)
                 {
-                  cout << origin << "-";
+                  if (j == 0)
+                  {
+                    cout << origin << "-";
+                  }
+                  else
+                  {
+                    cout << origin << " " << distance[i] << " load: " << oCap[i] - capacity[i] << endl;
+                  } 
                 }
                 else
                 {
-                  cout << origin << " " << distance[i] << " load: " << oCap[i] - capacity[i] << endl;
+                  cout << actualRoutes[i][j] << "-";
                 } 
               }
-              else
-              {
-                cout << actualRoutes[i][j] << "-";
-              } 
+            }
+          }  */
+
+          int rTruckQuality = getRouteQuality(actualRoutes, rTruck, farmQuality);
+
+          //  Save original Route
+          originalRoute = actualRoutes[rTruck];
+          /* cout << "rTruckQuality " << rTruckQuality << endl;
+          for (i = 0; i < int(actualRoutes[rTruck].size()) ; i++)
+          {
+            cout << actualRoutes[rTruck][i] << " " ;
+          }
+          cout << endl; */
+          // Remove conflict nodes in route
+          int removedNodes = 0;
+          for (i = 1; i < int(actualRoutes[rTruck].size() - 1 ) ; )
+          {
+            //cout << actualRoutes[rTruck][i] << ", farmQuality: " << farmQuality[actualRoutes[rTruck][i]] << endl;
+            if (farmQuality[actualRoutes[rTruck][i]] < rTruckQuality)
+            {
+              actualRoutes[rTruck].erase(actualRoutes[rTruck].begin() + i - removedNodes);
+            }
+            else
+            {
+              i++;
             }
           }
-        } 
-        cout << endl;*/
+          /* for (i = 0; i < int(actualRoutes[rTruck].size()) ; i++)
+          {
+            cout << actualRoutes[rTruck][i] << " " ;
+          }
+          cout << endl; */
+
+          /* actualRoutes[rTruck].clear();
+          //myvector.erase (myvector.begin()+5);
+          actualRoutes[rTruck].push_back(origin);
+          actualRoutes[rTruck].push_back(origin); */
+          getRealPrize(actualRealPrize, actualRoutes, nTrucks, nQualities, oProd, farmQuality);
+          getCapacity(capacity, oCap, oProd, actualRoutes, nTrucks);
+          getProduction(production, oProd, actualRoutes, nTrucks, nFarms);
+
+          actualRoutes[rTruck].pop_back();
+          position[rTruck] = actualRoutes[rTruck].back();
+
+          // Re-build Route
+
+          // Repetir ciclo hasta llenar el camión de producto
+          
+          while (true)
+          {
+            miopeRand(randLength, rTruckQuality, iQualityFarms, rTruck, randFarm, capacity, oCap, position, production, profit, cost);
+            // Cada uno de estos ciclos termina cuando el camión se llena de producto
+            // cout << "randFarm " << randFarm << endl;
+            if (randFarm == 0)
+            {
+              break;
+            }
+            
+            actualRoutes[rTruck].push_back(randFarm);
+            position[rTruck] = randFarm;
+            capacity[rTruck] -= production[randFarm];
+            actualRealPrize[rTruckQuality] += production[randFarm];
+            production[randFarm] = 0;
+          }
+
+          actualRoutes[rTruck].push_back(origin);
+
+          // Check Factibility
+          getRealPrize(actualRealPrize, actualRoutes, nTrucks, nQualities, oProd, farmQuality);
+          if (feasibility(actualRealPrize, minPrize, actualRoutes))
+          {
+            // cout << "SI fue posible reconstruir la ruta " << rTruck << endl;
+            // actualizar production, capacity
+            getCapacity(capacity, oCap, oProd, actualRoutes, nTrucks);
+            getProduction(production, oProd, actualRoutes, nTrucks, nFarms);
+            newRoutes[rTruck] = actualRoutes[rTruck];
+          }
+          // Build only with quality equal to original, no blending if possible
+
+          else
+          {
+            // Restore route again if necessary
+            actualRoutes[rTruck] = originalRoute;
+            getRealPrize(actualRealPrize, actualRoutes, nTrucks, nQualities, oProd, farmQuality);
+            getCapacity(capacity, oCap, oProd, actualRoutes, nTrucks);
+            getProduction(production, oProd, actualRoutes, nTrucks, nFarms);
+            // cout << "NO fue posible reconstruir la ruta " << rTruck << endl;
+          }
+
+          /* getLoadQuality(loadQuality, farmQuality, actualRoutes, nTrucks);
+          measureDist(distance, nTrucks, actualRoutes, cost);
+
+          for (i = 1; i < nTrucks; i++)
+          {
+            if (actualRoutes[i].size() != 0)
+            { 
+              cout << "Truck " << i << " Q" << loadQuality[i] << " ";
+              for (j = 0; j < int(actualRoutes[i].size()); j++)
+              {
+                if (actualRoutes[i][j] == origin)
+                {
+                  if (j == 0)
+                  {
+                    cout << origin << "-";
+                  }
+                  else
+                  {
+                    cout << origin << " " << distance[i] << " load: " << oCap[i] - capacity[i] << endl;
+                  } 
+                }
+                else
+                {
+                  cout << actualRoutes[i][j] << "-";
+                } 
+              }
+            }
+          } 
+          cout << endl; */
+        }
+        else
+        {
+          // cout << "rTruck es 0" << endl;
+        }
       }
       for (it = 0; it < nIterations; it++)
       {
-
-
-
         if (intensification)
         {
           if (noImprovement >= MaxImprovements*intensificationRatio && it > (nIterations*0.0))
@@ -1458,10 +1513,11 @@ int main(int argc, char** argv)
     }
     */
 
-    finish = std::chrono::high_resolution_clock::now();
-    elapsed = finish - start;
-    std::chrono::duration<double> timeToBest = bestQualityTime - start;
-    outFile << Seed << ";" << bestQuality << ";" << timeToBest.count() << ";" << elapsed.count() << "\n";
+    //finish = std::chrono::high_resolution_clock::now();
+    //elapsed = finish - start;
+    //std::chrono::duration<double> timeToBest = bestQualityTime - start;
+    //outFile << Seed << ";" << bestQuality << ";" << timeToBest.count() << ";" << elapsed.count() << "\n";
+    outFile << actualQuality << "\n";
     //outFile << "Elapsed time: " << elapsed.count() << " s\n";
     // cout << "Seed: " << Seed << ", bestQ: " << bestQuality << endl;
     cout << bestQuality << endl;

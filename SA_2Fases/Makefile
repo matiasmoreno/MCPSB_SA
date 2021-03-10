@@ -3,8 +3,7 @@ comp=g++
 prog=MCPSB_SA
 
 #PARAMS = Seed nResets nIterations T0 addP swapI kImprovements intensificationRatio path
-PARAMS = 1 10 10000 73 0.55 0.27 0.011 0.721 MCPSB/Test_Instances/instancia1.mcsb
-#PARAMS = 1 200 500000 350.5 0.0 0.5 0.5 0.01 MCPSB/Test_Instances/instancia1.mcsb
+PARAMS = 1 500 500000 30 0.5 0.5 0.01 0.2 MCPSB/Real_Instances/instancia1.0.mcsb
 
 debug=0
 

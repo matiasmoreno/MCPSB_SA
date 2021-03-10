@@ -1,0 +1,2 @@
+Prueba de nueva funcionalidad
+solo borra nodos de calidad mayor, cada vez que pasa a diversificacion

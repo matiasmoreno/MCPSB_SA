@@ -1,2 +1,21 @@
-MCPSB/Test_Instances/instancia1.mcsb  nFarms: 40  nTrucks: 7  MinPrizeQuality 1-2-3: 60000-40000-10000
-1;420.991;0.0556004;0.0588064
+MCPSB/Real_Instances/instancia1.0.mcsb  nFarms: 126  nTrucks: 9  MinPrizeQuality 1-2-3: 0-0-0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
