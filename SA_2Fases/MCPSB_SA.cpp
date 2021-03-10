@@ -981,7 +981,7 @@ int main(int argc, char** argv)
   // Iterador SA
   
   int itRes, it, r, rFarm, rFarm2, auxFarm, rFarmExternal, rTruck, nAvailableF, availableF[nFarms], minDist, dist, minDistPos;
-  int noImprovement;
+  int noImprovement, iterationCount;
   float p, operatorP, acceptanceP;
   float Temp, addPm, capRatio;
   bool feasible, intensification, selected, accepted;
@@ -993,24 +993,16 @@ int main(int argc, char** argv)
     noImprovement = 0;
     intensification = false;
     resetBestQuality = 0;
+    iterationCount = 0;
     for (it = 0; it < nIterations; it++)
     {
-      if (intensification)
+      iterationCount++;
+      if ((iterationCount - nIterations*0.1) == 0)
       {
-        if (noImprovement >= MaxImprovements*intensificationRatio && it > (nIterations*0.0))
-        {
-          intensification = !intensification;
-          noImprovement = 0;
-        }
+        intensification = !intensification;
+        iterationCount = 0;
       }
-      else
-      {
-        if (noImprovement >= MaxImprovements && it > (nIterations*0.0))
-        {
-          intensification = !intensification;
-          noImprovement = 0;
-        }
-      }
+      
       
       feasible = false;
 
@@ -1080,38 +1072,6 @@ int main(int argc, char** argv)
             }
           }
         }
-        
-        /* else if (addP + swapP > operatorP) // Swap Externo
-        {
-          // Se puede hacer swap solo si existe un nodo presente
-          if (int(actualRoutes[rTruck].size()) > 2)
-          {
-            rFarm = int_rand(1, actualRoutes[rTruck].size() - 1);
-            rFarmExternal = getTopRandomExternalFarmv2(actualRoutes, cost, production, oProd, farmQuality, rTruck, rFarm, nTrucks, nFarms, nQualities, randLength, profit, capacity, iQualityFarms, origin);
-
-            if (rFarmExternal != 0)
-            {
-              newRoutes[rTruck][rFarm] = rFarmExternal;
-
-              // Nueva cantidad de recolección por calidad
-              getRealPrize(newRealPrize, newRoutes, nTrucks, nQualities, oProd, farmQuality);
-              if (feasibility(newRealPrize, minPrize, newRoutes))
-              {
-                feasible = true;
-              }
-              else
-              {
-                // Restaurar actualRealPrize
-                for (i = 1; i < nQualities; i++)
-                {
-                  newRealPrize[i] = actualRealPrize[i];
-                }
-                // Restaurar newRoutes
-                newRoutes[rTruck] = actualRoutes[rTruck];
-              }
-            }
-          }
-        } */
         
         else // Quitar nodo de una ruta
         {
@@ -1225,12 +1185,8 @@ int main(int argc, char** argv)
 
         if (intensification)
         {
-          /* p = exp((newQuality - actualQuality)/(Temp*0.01));
+          p = exp((newQuality - actualQuality)/(Temp*0.1));
           if (p > acceptanceP) // Se acepta el movimiento
-          {
-            accepted = true;
-          } */
-          if (newQuality > actualQuality) // Si la nueva solución es mejor que la anterior la acepto
           {
             accepted = true;
           }
@@ -1314,7 +1270,7 @@ int main(int argc, char** argv)
         noImprovement++;
       }
       totalIt++;
-      if (totalIt % 1000 == 0) // Escribo en el CSV
+      if (totalIt % 50 == 0) // Escribo en el CSV
       {
         p = std::ceil(p * 100.0) / 100.0;
         data << totalIt << "," << Temp << "," << actualQuality << "," << topQuality << "," << float(acceptedDowngrades)/float(nUpdates)*100 << "," << intensification << "\n";
