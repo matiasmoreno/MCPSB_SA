@@ -997,7 +997,7 @@ int main(int argc, char** argv)
     {
       if (intensification)
       {
-        if (noImprovement >= MaxImprovements*intensificationRatio && it > (nIterations*0.0))
+        if (noImprovement >= MaxImprovements*intensificationRatio && it > (nIterations*0.05))
         {
           intensification = !intensification;
           noImprovement = 0;
@@ -1005,7 +1005,7 @@ int main(int argc, char** argv)
       }
       else
       {
-        if (noImprovement >= MaxImprovements && it > (nIterations*0.0))
+        if (noImprovement >= MaxImprovements && it > (nIterations*0.05))
         {
           intensification = !intensification;
           noImprovement = 0;
@@ -1080,38 +1080,6 @@ int main(int argc, char** argv)
             }
           }
         }
-        
-        /* else if (addP + swapP > operatorP) // Swap Externo
-        {
-          // Se puede hacer swap solo si existe un nodo presente
-          if (int(actualRoutes[rTruck].size()) > 2)
-          {
-            rFarm = int_rand(1, actualRoutes[rTruck].size() - 1);
-            rFarmExternal = getTopRandomExternalFarmv2(actualRoutes, cost, production, oProd, farmQuality, rTruck, rFarm, nTrucks, nFarms, nQualities, randLength, profit, capacity, iQualityFarms, origin);
-
-            if (rFarmExternal != 0)
-            {
-              newRoutes[rTruck][rFarm] = rFarmExternal;
-
-              // Nueva cantidad de recolección por calidad
-              getRealPrize(newRealPrize, newRoutes, nTrucks, nQualities, oProd, farmQuality);
-              if (feasibility(newRealPrize, minPrize, newRoutes))
-              {
-                feasible = true;
-              }
-              else
-              {
-                // Restaurar actualRealPrize
-                for (i = 1; i < nQualities; i++)
-                {
-                  newRealPrize[i] = actualRealPrize[i];
-                }
-                // Restaurar newRoutes
-                newRoutes[rTruck] = actualRoutes[rTruck];
-              }
-            }
-          }
-        } */
         
         else // Quitar nodo de una ruta
         {
@@ -1225,12 +1193,8 @@ int main(int argc, char** argv)
 
         if (intensification)
         {
-          /* p = exp((newQuality - actualQuality)/(Temp*0.01));
+          p = exp((newQuality - actualQuality)/(Temp*0.1));
           if (p > acceptanceP) // Se acepta el movimiento
-          {
-            accepted = true;
-          } */
-          if (newQuality > actualQuality) // Si la nueva solución es mejor que la anterior la acepto
           {
             accepted = true;
           }
@@ -1314,7 +1278,7 @@ int main(int argc, char** argv)
         noImprovement++;
       }
       totalIt++;
-      if (totalIt % 1000 == 0) // Escribo en el CSV
+      if (totalIt % 50 == 0) // Escribo en el CSV
       {
         p = std::ceil(p * 100.0) / 100.0;
         data << totalIt << "," << Temp << "," << actualQuality << "," << topQuality << "," << float(acceptedDowngrades)/float(nUpdates)*100 << "," << intensification << "\n";
@@ -1376,43 +1340,10 @@ int main(int argc, char** argv)
   getRealPrize(bestRealPrize, bestRoutes, nTrucks, nQualities, oProd, farmQuality);
   bestBlend(finalPrize, bestRealPrize, minPrize);
 
-  /* // Escribir mejor solución 2 Phases
-  outFile << "\n** SA ** nReset: " << nResets << "  nIt: " << nIterations << endl;
-  outFile << "Quality: " << bestQuality << ", Income: " << bestIncome << ", Cost: " << bestCost <<  "  PrizeCollected (1-2-3): " << finalPrize[1] << " " << finalPrize[2] << " " << finalPrize[3] << endl;
-  outFile << "Truck N / Load Quality / Visited Farms / Distance / Total Load" << endl;
-  for (i = 1; i < nTrucks; i++)
-  {
-    if (bestRoutes[i].size() != 0)
-    { 
-      outFile << "Truck " << i << " Q" << loadQuality[i] << " ";
-      for (j = 0; j < int(bestRoutes[i].size()); j++)
-      {
-        if (bestRoutes[i][j] == origin)
-        {
-          if (j == 0)
-          {
-            outFile << origin << "-";
-          }
-          else
-          {
-            outFile << origin << " " << distance[i] << " " << oCap[i] - capacity[i] << endl;
-          } 
-        }
-        else
-        {
-          outFile << bestRoutes[i][j] << "-";
-        } 
-      }
-    }
-  } */
-
   finish = std::chrono::high_resolution_clock::now();
   elapsed = finish - start;
   std::chrono::duration<double> timeToBest = bestQualityTime - start;
   outFile << bestQuality << "\n";
-  //outFile << Seed << ";" << bestQuality << ";" << timeToBest.count() << ";" << elapsed.count() << "\n";
-  //outFile << "Elapsed time: " << elapsed.count() << " s\n";
-  // cout << "Seed: " << Seed << ", bestQ: " << bestQuality << endl;
   cout << bestQuality << endl;
 
   if (bestQuality > topQuality)
