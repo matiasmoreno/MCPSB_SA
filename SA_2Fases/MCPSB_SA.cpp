@@ -997,7 +997,7 @@ int main(int argc, char** argv)
     {
       if (intensification)
       {
-        if (noImprovement >= MaxImprovements*intensificationRatio && it > (nIterations*0.0))
+        if (noImprovement >= MaxImprovements*intensificationRatio && it > (nIterations*0.05))
         {
           intensification = !intensification;
           noImprovement = 0;
@@ -1005,7 +1005,7 @@ int main(int argc, char** argv)
       }
       else
       {
-        if (noImprovement >= MaxImprovements && it > (nIterations*0.0))
+        if (noImprovement >= MaxImprovements && it > (nIterations*0.05))
         {
           intensification = !intensification;
           noImprovement = 0;
@@ -1314,7 +1314,7 @@ int main(int argc, char** argv)
         noImprovement++;
       }
       totalIt++;
-      if (totalIt % 1000 == 0) // Escribo en el CSV
+      if (totalIt % 50 == 0) // Escribo en el CSV
       {
         p = std::ceil(p * 100.0) / 100.0;
         data << totalIt << "," << Temp << "," << actualQuality << "," << topQuality << "," << float(acceptedDowngrades)/float(nUpdates)*100 << "," << intensification << "\n";
